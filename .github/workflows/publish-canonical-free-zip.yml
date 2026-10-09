@@ -1,0 +1,113 @@
+name: Publish Canonical Mac Automation Doctor Free ZIP
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-canonical-free-zip.yml"
+      - "pack/README.md"
+      - "TERMS.md"
+      - "mac_automation_doctor_free.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mac-automation-doctor-canonical-free-zip
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Build and verify canonical ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from __future__ import annotations
+          import hashlib
+          import pathlib
+          import py_compile
+          import zipfile
+
+          root = pathlib.Path('.')
+          files = {
+              'README.md': (root / 'pack' / 'README.md').read_bytes(),
+              'TERMS.md': (root / 'TERMS.md').read_bytes(),
+              'mac_automation_doctor_free.py': (root / 'mac_automation_doctor_free.py').read_bytes(),
+          }
+
+          # Basic safety and integrity checks before packaging.
+          text = b'\n'.join(files.values())
+          forbidden = [
+              b'-----BEGIN PRIVATE KEY-----',
+              b'-----BEGIN RSA PRIVATE KEY-----',
+              b'/Users/josephgilles',
+              b'github_pat_',
+              b'ghp_',
+          ]
+          for marker in forbidden:
+              if marker in text:
+                  raise SystemExit(f'FORBIDDEN_CONTENT:{marker!r}')
+
+          py_compile.compile(str(root / 'mac_automation_doctor_free.py'), doraise=True)
+
+          out = root / 'downloads'
+          out.mkdir(exist_ok=True)
+          archive = out / 'mac-automation-doctor-free.zip'
+          fixed_datetime = (2026, 9, 20, 12, 0, 0)
+          with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+              for name in sorted(files):
+                  zi = zipfile.ZipInfo(f'mac-automation-doctor-free/{name}', date_time=fixed_datetime)
+                  zi.compress_type = zipfile.ZIP_DEFLATED
+                  zi.external_attr = 0o644 << 16
+                  zf.writestr(zi, files[name])
+
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          expected = 'cff0f4233a193580ddf7bfb9b59a350fafbf2a067aab22492d9b6230c63c4c78'
+          if digest != expected:
+              raise SystemExit(f'ZIP_SHA_MISMATCH expected={expected} actual={digest}')
+
+          # Verify archive membership and contents, not only the outer hash.
+          with zipfile.ZipFile(archive, 'r') as zf:
+              expected_names = [
+                  'mac-automation-doctor-free/README.md',
+                  'mac-automation-doctor-free/TERMS.md',
+                  'mac-automation-doctor-free/mac_automation_doctor_free.py',
+              ]
+              if zf.namelist() != expected_names:
+                  raise SystemExit(f'ZIP_MEMBERS_MISMATCH:{zf.namelist()}')
+              for name, data in files.items():
+                  if zf.read(f'mac-automation-doctor-free/{name}') != data:
+                      raise SystemExit(f'ZIP_CONTENT_MISMATCH:{name}')
+
+          (out / 'SHA256.txt').write_text(f'{digest}  mac-automation-doctor-free.zip\n', encoding='utf-8')
+          (out / 'BUILD-RECEIPT.txt').write_text(
+              'MAC_AUTOMATION_DOCTOR_FREE_CANONICAL=PASS\n'
+              f'SHA256={digest}\n'
+              'SOURCE_CODE_GIT_BLOB=971d6c4407508ea606152d491a31b3e9ce61be94\n'
+              'TERMS_GIT_BLOB=e989109c0cc44a84a1df18c22bb234abde704a3f\n',
+              encoding='utf-8',
+          )
+          print('MAC_AUTOMATION_DOCTOR_FREE_CANONICAL=PASS')
+          print(f'SHA256={digest}')
+          PY
+
+      - name: Commit permanent download files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads/mac-automation-doctor-free.zip downloads/SHA256.txt downloads/BUILD-RECEIPT.txt
+          if git diff --cached --quiet; then
+            echo "Canonical download already current."
+            exit 0
+          fi
+          git commit -m "Publish canonical Mac Automation Doctor Free ZIP [skip ci]"
+          git push origin HEAD:main
