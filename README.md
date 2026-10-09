@@ -26,6 +26,16 @@ Mac Automation Doctor Free checks common failure points such as:
 
 It is especially useful for the classic case where **a command works when you run it yourself, but the same automation does not behave correctly as a LaunchAgent**.
 
+## Troubleshooting guides
+
+If you want to understand the problem before running anything, start here:
+
+- [LaunchAgent works in Terminal but not in launchd](docs/launchagent-works-in-terminal-not-launchd.md)
+- [`launchctl bootstrap` failed: what to check before retrying](docs/launchctl-bootstrap-failed.md)
+- [Why launchd cannot find a command that works in Terminal](docs/launchd-path-different-from-terminal.md)
+
+These guides are intentionally useful without requiring a purchase or download.
+
 ## What it does *not* do
 
 The diagnostic is intentionally conservative:
