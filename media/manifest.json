@@ -1,0 +1,18 @@
+{
+  "mac-automation-doctor-free-icon-1024.png": {
+    "bytes": 16366,
+    "sha256": "680be425a65080f14e3749c669c671eb03044da3c5f579d4b389f5617e24910e"
+  },
+  "mac-automation-doctor-free-screenshot-01-summary.png": {
+    "bytes": 67195,
+    "sha256": "ab16e0d5c9965674d32c459337ce7802e5c8e78d98841a7a2633c49f98576a87"
+  },
+  "mac-automation-doctor-free-screenshot-02-finding.png": {
+    "bytes": 74032,
+    "sha256": "5fa09ec7d6c5eab06ef82d8aafe344b1e3abe5b604ffab412439749c58619043"
+  },
+  "mac-automation-doctor-free-screenshot-03-safety.png": {
+    "bytes": 66646,
+    "sha256": "243f15904c973219780f89201ce122387297e83c5b0fc5a5c926b8f864d9f8b9"
+  }
+}
