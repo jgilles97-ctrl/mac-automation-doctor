@@ -4,11 +4,23 @@
 
 Mac Automation Doctor Free is a local, read-only troubleshooting tool for macOS LaunchAgents and background automation. It looks for common deterministic problems that can make a script or scheduled job work manually but fail when `launchd` runs it.
 
+## See what it reports
+
+These screenshots use synthetic sample data. They show the real Free 1.0 report structure without exposing anyone's Mac, username, files, logs, or LaunchAgents.
+
+| Summary | Example finding | Safety scope |
+| --- | --- | --- |
+| ![Synthetic Mac Automation Doctor summary](media/mac-automation-doctor-free-screenshot-01-summary.png) | ![Synthetic missing-program finding](media/mac-automation-doctor-free-screenshot-02-finding.png) | ![Mac Automation Doctor Free safety scope](media/mac-automation-doctor-free-screenshot-03-safety.png) |
+
+**Common reason to use it:** a script works when you run it in Terminal, but the same job fails or produces no useful output when `launchd` runs it in the background.
+
 ## Download
 
 **[Download Mac Automation Doctor Free 1.0](https://github.com/jgilles97-ctrl/mac-automation-doctor/releases/download/v1.0.0-free/mac-automation-doctor-free.zip)**
 
 SHA-256: `2c621d6acad0553c3da744c88be2417b72594c2786873c595eb4fb807fa06249`
+
+The ZIP contents are inspectable source files and documentation. The diagnostic is read-only: it reports likely causes and does not unload services, kill processes, edit plists, or apply repairs.
 
 The release ZIP is the easiest download. The source is also available in this repository for inspection.
 
