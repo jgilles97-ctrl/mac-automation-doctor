@@ -79,13 +79,15 @@ The tool is designed for people who use LaunchAgents, scripts, local automation,
 - “The plist looks right but the executable or directory is missing.”
 - “Two jobs appear to be using the same label.”
 
-## Free vs. Pro
+## Free and the current $9 release
 
-The **Free** edition is the useful no-cost diagnostic entry point.
+The **Free** edition is a useful no-cost, source-visible diagnostic for the current user's `~/Library/LaunchAgents`. It includes local system metrics and JSON/Markdown reports.
 
-**Mac Automation Doctor Pro** expands the workflow with richer reports, historical scan comparison/diffing, and sanitized support-bundle export for deeper troubleshooting. Pro is a separate paid Cenluma product; the Free edition remains independently useful and is not intentionally crippled to force an upgrade.
+The separate paid [Mac Automation Doctor v1 release on itch.io](https://cenluma.itch.io/mac-automation-doctor) is listed at **$9 or more** and is described there as a frozen QA release. It expands the scan to the current user's `~/Library/LaunchAgents`, `/Library/LaunchAgents`, and `/Library/LaunchDaemons`. Running it with `--include-apple` also scans `/System/Library/LaunchAgents` and `/System/Library/LaunchDaemons`. It checks duplicate labels across the scopes it scans and includes the same local memory, swap, and home-disk summary plus JSON/Markdown reports.
 
-Cenluma: https://cenluma.com
+The v1 download is a ZIP of Python source and documentation, not a signed `.app`; its included README shows how to run it with `/usr/bin/python3`. This current v1 does **not** include interactive HTML reports, historical comparisons/diffs, or sanitized support-bundle export.
+
+The tool makes no network or AI/model calls at runtime. Its included `TERMS.md` discloses AI assistance for drafting, organization, and testing support.
 
 ## Privacy and safety
 
