@@ -21,7 +21,7 @@ from collections import Counter
 from typing import Any
 
 SCHEMA = "MAC_AUTOMATION_DOCTOR_FREE_REPORT_V1"
-DEFAULT_UPGRADE_URL = ""
+DEFAULT_UPGRADE_URL = "https://cenluma.itch.io/mac-automation-doctor"
 UPGRADE_URL = os.environ.get("MAC_AUTOMATION_DOCTOR_PRO_URL", DEFAULT_UPGRADE_URL).strip() or DEFAULT_UPGRADE_URL
 
 # Finding definitions table for Free Edition
@@ -544,17 +544,15 @@ def markdown_report(report: dict[str, Any]) -> str:
                 ]
 
     lines += [
-        "## Upgrade to Mac Automation Doctor Pro",
-        "Need complete, enterprise-grade macOS background diagnostics?",
-        "Upgrade to Mac Automation Doctor Pro to unlock:",
-        "- **System-Wide Scopes:** Scan `/Library/LaunchAgents` and `/Library/LaunchDaemons`",
-        "- **Apple System Scopes:** Scan `/System/Library` background services (`--include-apple`)",
-        "- **PATH & Context Diagnostics:** Identify launchd-vs-Terminal environment mismatches",
-        "- **Rich Interactive HTML Reports:** Self-contained, styled `report.html` dashboards",
-        "- **Historical Comparison / Diff:** Track new, resolved, and persistent findings over time (`--diff`)",
-        "- **Sanitized Support Bundle:** Export safe `.tar.gz` diagnostic bundles for tech support (`--export-support-bundle`)",
+        "## Separate paid v1 release",
+        "The frozen QA ZIP expands the scan beyond the Free edition's user LaunchAgents scope.",
+        "- **System-wide scans:** includes the user's ~/Library/LaunchAgents, /Library/LaunchAgents, and /Library/LaunchDaemons.",
+        "- **Apple system scans:** --include-apple adds /System/Library/LaunchAgents and /System/Library/LaunchDaemons.",
+        "- **Reports:** checks duplicate labels across scanned scopes and produces JSON and Markdown reports with the same local memory, swap, and home-disk summary.",
+        "The paid v1 release does not include interactive HTML reports, historical diffs, support-bundle export, or automatic repairs.",
+        "The buyer download is a ZIP of Python source and documentation, not a signed macOS app.",
         "",
-        (f"Learn more or upgrade at: {UPGRADE_URL}" if UPGRADE_URL else "Pro storefront URL: not configured yet (set MAC_AUTOMATION_DOCTOR_PRO_URL after the live listing exists)."),
+        (f"Paid v1 product page: {UPGRADE_URL}" if UPGRADE_URL else "Paid v1 product page: not configured in this copy."),
         "",
         "## Usage & Safety Notice",
         "Mac Automation Doctor Free Edition does not mutate inspected launchd/system configuration or terminate processes. It only creates the requested local report files.",
@@ -576,21 +574,25 @@ def main() -> int:
 
     args, unknown = ap.parse_known_args()
 
-    # If user requests Pro-only flags, print informative upgrade notice
-    pro_requested = []
+    # Explain the paid v1 scope without promising features it does not include.
+    unavailable_options = []
     if args.include_apple:
-        pro_requested.append("--include-apple")
+        unavailable_options.append("--include-apple")
     if args.diff:
-        pro_requested.append("--diff")
+        unavailable_options.append("--diff")
     if args.export_support_bundle:
-        pro_requested.append("--export-support-bundle")
+        unavailable_options.append("--export-support-bundle")
 
-    if pro_requested:
-        print(f"Notice: The option(s) {', '.join(pro_requested)} require Mac Automation Doctor Pro.")
-        if UPGRADE_URL:
-            print(f"Upgrade to Pro at {UPGRADE_URL} to unlock advanced system-wide diagnostics, HTML reports, historical diffs, and support bundle exports.")
-        else:
-            print("Pro storefront URL is not configured yet.")
+    if unavailable_options:
+        print(f"Notice: {', '.join(unavailable_options)} are not run by this Free v1 script.")
+        if args.include_apple:
+            print("The separate paid v1 release adds /Library scans and optional /System/Library scans with --include-apple.")
+            if UPGRADE_URL:
+                print(f"Paid v1 product page: {UPGRADE_URL}")
+            else:
+                print("Paid v1 product page is not configured in this copy.")
+        if args.diff or args.export_support_bundle:
+            print("The current paid v1 release does not include HTML reports, historical diffs, or support-bundle export.")
 
     home = pathlib.Path.home()
     stamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -613,12 +615,9 @@ def main() -> int:
         "services": services,
         "upgrade_info": {
             "pro_features": [
-                "System-Wide LaunchAgents & LaunchDaemons scanning (/Library/LaunchAgents, /Library/LaunchDaemons)",
-                "Apple System background services scanning (/System/Library)",
-                "launchd vs Terminal PATH context mismatch detection",
-                "Self-contained interactive HTML reports (report.html)",
-                "Historical report comparison & diff analysis (--diff)",
-                "Sanitized support bundle export (.tar.gz)",
+                "Expanded scan of /Library/LaunchAgents and /Library/LaunchDaemons",
+                "Optional Apple system scan of /System/Library/LaunchAgents and /System/Library/LaunchDaemons with --include-apple",
+                "Duplicate-label checks across scanned scopes",
             ],
             "upgrade_url": UPGRADE_URL or None,
         },
