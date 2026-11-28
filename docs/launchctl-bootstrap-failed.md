@@ -52,6 +52,24 @@ If the failure is deterministic, another identical retry is unlikely to fix the 
 
 Apps on modern macOS can manage bundled helpers using Apple’s Service Management framework. If the LaunchAgent came from an installed application, manual plist manipulation may not be the app’s supported control path.
 
+## If `bootstrap` reports error 5
+
+A message such as `Bootstrap failed: 5: Input/output error` is a generic failure, not a diagnosis of a bad disk or a single cause. Note the job label and the time of the failure, then inspect recent launchd messages:
+
+```bash
+log show --last 10m --style compact --predicate 'process == "launchd"'
+```
+
+Compare entries near the failure with the job label, executable, and paths in the plist. An empty or unclear log does not rule out a cause. Review output for private paths or other sensitive details before sharing it.
+
+If the job launches an app, plug-in, or installer downloaded from outside the App Store, you can read its quarantine attribute without changing it:
+
+```bash
+xattr -p com.apple.quarantine /absolute/path/to/downloaded-app
+```
+
+The attribute's presence or absence alone does not identify the cause. Do not remove it or disable Gatekeeper as a generic fix. Apple describes Gatekeeper's checks for downloaded software and its tracking of file provenance in [Gatekeeper and runtime protection](https://support.apple.com/guide/security/gatekeeper-and-runtime-protection-sec5599b66df/web).
+
 ## Read-only first-pass check
 
 [Mac Automation Doctor Free](../README.md) checks several common deterministic causes before you start editing or repeatedly reloading jobs:
