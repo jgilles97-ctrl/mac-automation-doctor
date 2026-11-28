@@ -66,7 +66,8 @@ It diagnoses and explains. You decide what to change.
 1. Download and unzip the release.
 2. Make sure Python 3.9 or newer is available on the Mac.
 3. Run the included diagnostic from Terminal.
-4. Review the findings before making any manual changes.
+4. If you use `--stdout`, the Markdown report is also printed in Terminal, but the tool still writes both `report.md` and `report.json` to the default timestamped report folder or the directory supplied with `--output`.
+5. Review the findings before making any manual changes.
 
 The tool is designed for people who use LaunchAgents, scripts, local automation, developer tools, or background jobs and want a safer first troubleshooting pass before editing system configuration.
 
