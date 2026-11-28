@@ -4,6 +4,8 @@
 
 Mac Automation Doctor Free is a local, read-only troubleshooting tool for macOS LaunchAgents and background automation. It looks for common deterministic problems that can make a script or scheduled job work manually but fail when `launchd` runs it.
 
+The separate paid v1 is listed at **$9 or more** on [itch.io](https://cenluma.itch.io/mac-automation-doctor).
+
 ## See what it reports
 
 These screenshots use synthetic sample data. They show the real Free 1.0 report structure without exposing anyone's Mac, username, files, logs, or LaunchAgents.
